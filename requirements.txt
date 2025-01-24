@@ -1,1 +1,2 @@
 pyaudio
+audio-recorder-streamlit
