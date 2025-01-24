@@ -1,2 +1,3 @@
 pyaudio
 audio-recorder-streamlit
+librosa
