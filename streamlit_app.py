@@ -36,10 +36,14 @@ def analyze_beats(audio_data, bpm):
         st.write(y, sr)
         
         #sr = 0.6*sr
-        st.write('antes de onset_strength')
-        onset_env = librosa.onset.onset_strength(y=y, sr=sr, aggregate=np.median)
+        st.write('antes de beat_track')
+        #onset_env = librosa.onset.onset_strength(y=y, sr=sr, aggregate=np.median)
+        #tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
+        tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+        st.write('antes de frames_to_time')
+        beat_times = librosa.frames_to_time(beat_frames, sr=sr)
         st.write('antes de beat track')
-        tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
+        
         st.write('tempo e beat_frames')
         sr.write(tempo, beat_frames)
         beat_times = librosa.frames_to_time(beat_frames, sr=sr)
