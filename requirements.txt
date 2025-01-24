@@ -1,3 +1,4 @@
 pyaudio
 audio-recorder-streamlit
 librosa
+pydub
