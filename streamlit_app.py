@@ -54,12 +54,14 @@ def analyze_beats(audio_data, bpm):
 
 st.title("Beat Analyzer")
 
+bpm = st.number_input("Enter BPM", min_value=1, value=128)
+
 audio_bytes = audio_recorder()
 
-if audio_bytes:
-    bpm = st.number_input("Enter BPM", min_value=1, value=128)
+if audio_bytes:    
     if st.button("Analyze"):
         beat_data = analyze_beats(audio_bytes, bpm)
+        st.write(beat_data)
         if beat_data is not None:
             st.dataframe(beat_data)
 else:
