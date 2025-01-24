@@ -72,9 +72,6 @@ if audio_bytes:
 bpm = 60
 beat_data = analyze_beats(audio_bytes, bpm)
 
-if beat_data:
+if beat_data is not None:
     print("Beat Information:")
-    first_beat_time = beat_data[0][0]
-    for beat_time, beat_number, position in beat_data:
-        relative_beat_time = beat_time - first_beat_time
-        print(f"Time: {beat_time:.2f} s, Relative_Time: {relative_beat_time:.2f} s, Beat Number: {beat_number}, Position in Pulse: {position:.2f}")
+    st.dataframe(beat_data)
