@@ -50,7 +50,12 @@ def analyze_beats(audio_file, bpm):
             # Calculate position within the pulse
             position_in_pulse = ((beat_time - first_beat_time) % pulse_duration) / pulse_duration
             beat_info.append((beat_time, beat_number, position_in_pulse))
-        return beat_info
+
+        # Create a Pandas DataFrame
+        df = pd.DataFrame(beat_info, columns=['Time (s)', 'Beat Number', 'Position in Pulse'])
+        df['Relative Time (s)'] = df['Time (s)'] - df['Time (s)'].iloc[0]
+        return df
+        
 
     except FileNotFoundError:
         print(f"Error: Input file '{audio_file}' not found.")
