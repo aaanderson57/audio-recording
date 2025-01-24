@@ -73,5 +73,5 @@ bpm = 60
 beat_data = analyze_beats(audio_bytes, bpm)
 
 if beat_data is not None:
-    print("Beat Information:")
+    st.success("Beat Information:")
     st.dataframe(beat_data)
