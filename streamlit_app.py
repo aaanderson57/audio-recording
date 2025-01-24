@@ -57,6 +57,8 @@ st.title("Beat Analyzer")
 bpm = st.number_input("Enter BPM", min_value=1, value=128)
 
 audio_bytes = audio_recorder()
+if audio_bytes:
+    st.audio(audio_bytes, format="audio/wav")
 
 if audio_bytes:    
     if st.button("Analyze"):
