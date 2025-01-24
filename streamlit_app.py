@@ -32,11 +32,14 @@ def analyze_beats(audio_data, bpm):
         # Convert AudioSegment to NumPy array
         y = np.array(audio_segment.get_array_of_samples())
         sr = audio_segment.frame_rate
+        st.write('y e sr')
         st.write(y, sr)
         
         sr = 0.6*sr
         onset_env = librosa.onset.onset_strength(y=y, sr=sr, aggregate=np.median)
         tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
+        st.write('tempo e beat_frames')
+        sr.write(tempo, beat_frames)
         beat_times = librosa.frames_to_time(beat_frames, sr=(10/6)*sr)
 
         pulse_duration = 60 / bpm
