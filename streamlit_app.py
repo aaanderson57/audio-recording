@@ -3,6 +3,8 @@ from audio_recorder_streamlit import audio_recorder
 import librosa
 import numpy as np
 import soundfile as sf
+import tempfile
+import os
 
 
 def analyze_beats(audio_file, bpm):
@@ -72,9 +74,12 @@ if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
     if audio_bytes:
     # Save the audio data to a temporary file
-        temp_audio_file = "temp_audio.wav"
-        with open(temp_audio_file, "wb") as f:
-            f.write(audio_bytes)
+        #temp_audio_file = "temp_audio.wav"
+        #with open(temp_audio_file, "wb") as f:
+        #    f.write(audio_bytes)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio_file:
+            temp_audio_file.write(audio_bytes)
+            temp_audio_file_path = temp_audio_file.name
 
         bpm = st.number_input("Enter BPM", min_value=1, value=128)
 
@@ -85,10 +90,7 @@ if audio_bytes:
                 st.dataframe(beat_data)  # Display DataFrame in Streamlit
         # Remove temporary file after processing
         #import os
-        #os.remove(temp_audio_file)
+        os.remove(temp_audio_file_path)
 else:
     st.warning("Please record an audio file.")
 
-if beat_data is not None:
-    st.success("Beat Information:")
-    st.dataframe(beat_data)
