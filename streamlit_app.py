@@ -64,7 +64,7 @@ def analyze_beats(audio_file, bpm):
         print(f"An error occurred: {e}")
         return None
 
-
+st.write('carregando audio...')
 audio_bytes = audio_recorder()
 #if audio_bytes:
 #    st.audio(audio_bytes, format="audio/wav")
