@@ -71,6 +71,7 @@ audio_bytes = audio_recorder()
 
 bpm = 60
 beat_data = analyze_beats(audio_bytes, bpm)
+print(beat_data)
 
 if beat_data is not None:
     st.success("Beat Information:")
