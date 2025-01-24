@@ -64,8 +64,8 @@ audio_bytes = audio_recorder()
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
 
-beat_data = analyze_beats(audio_bytes, bpm)
 bpm = 60
+beat_data = analyze_beats(audio_bytes, bpm)
 
 if beat_data:
     print("Beat Information:")
