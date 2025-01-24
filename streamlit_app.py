@@ -27,7 +27,7 @@ def analyze_beats(audio_data, bpm):
         # Convert bytes to AudioSegment
         audio_segment = AudioSegment.from_file(BytesIO(audio_data), format="wav") # Assuming input is WAV
         st.write('Tentando imprimir audio_segment')
-        st.write(type(audio_segment))
+        st.write(class(audio_segment))
             
         # Convert AudioSegment to NumPy array
         y = np.array(audio_segment.get_array_of_samples())
