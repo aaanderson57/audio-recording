@@ -37,6 +37,7 @@ def analyze_beats(audio_data, bpm):
         
         sr = 0.6*sr
         onset_env = librosa.onset.onset_strength(y=y, sr=sr, aggregate=np.median)
+        st.write('antes de beat track')
         tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
         st.write('tempo e beat_frames')
         sr.write(tempo, beat_frames)
