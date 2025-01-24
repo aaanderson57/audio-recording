@@ -70,19 +70,18 @@ st.title("Beat Analyzer")
 audio_bytes = audio_recorder()
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
-
-if audio_bytes:
+    if audio_bytes:
     # Save the audio data to a temporary file
-    temp_audio_file = "temp_audio.wav"
-    with open(temp_audio_file, "wb") as f:
-        f.write(audio_bytes)
+        temp_audio_file = "temp_audio.wav"
+        with open(temp_audio_file, "wb") as f:
+            f.write(audio_bytes)
 
-bpm = st.number_input("Enter BPM", min_value=1, value=128)
+        bpm = st.number_input("Enter BPM", min_value=1, value=128)
 
-if st.button("Analyze"):
-    beat_data = analyze_beats(temp_audio_file, bpm)
-    if beat_data is not None:
-        st.dataframe(beat_data)  # Display DataFrame in Streamlit
+        if st.button("Analyze"):
+            beat_data = analyze_beats(temp_audio_file, bpm)
+            if beat_data is not None:
+                st.dataframe(beat_data)  # Display DataFrame in Streamlit
         # Remove temporary file after processing
         #import os
         #os.remove(temp_audio_file)
