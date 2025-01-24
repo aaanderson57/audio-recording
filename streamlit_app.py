@@ -1,96 +1,66 @@
-import streamlit as st
-from audio_recorder_streamlit import audio_recorder
 import librosa
 import numpy as np
 import soundfile as sf
-import tempfile
-import os
+import pandas as pd
+import streamlit as st
+from audio_recorder_streamlit import audio_recorder
+from io import BytesIO
+from pydub import AudioSegment
+
+#@title Audio File and BPM Input
+#audio_file_path = "batidas.m4a" #@param {type:"string"}
+#bpm = 128 #@param {type:"number"}
 
 
-def analyze_beats(audio_file, bpm):
+def analyze_beats(audio_data, bpm):
     """
-    Analyzes an audio file to determine beat positions relative to a given BPM.
+    Analyzes audio data to determine beat positions.
 
     Args:
-        audio_file (str): Path to the audio file (WAV format).
+        audio_data (bytes): Audio data as bytes.
         bpm (float): Beats per minute.
 
     Returns:
-        list: A list of tuples, where each tuple contains:
-              - The time of the beat in seconds.
-              - The beat number (starting from 0).
-              - The position of the beat within the pulse (0.0 to 1.0).
+        pandas.DataFrame: A DataFrame containing beat information.
     """
-
     try:
-        # Load the audio file
-        y, sr = librosa.load(audio_file, sr = None)
+        # Convert bytes to AudioSegment
+        audio_segment = AudioSegment.from_file(BytesIO(audio_data), format="wav") # Assuming input is WAV
+
+        # Convert AudioSegment to NumPy array
+        y = np.array(audio_segment.get_array_of_samples())
+        sr = audio_segment.frame_rate
+
         sr = 0.6*sr
-        # The problem seems to be in sampling rate (sr). Setting as sr = 0.1*sr the beats are detected more precisely, but the time increses (why?)
-        # Answer: When you set a diferent value to sr, remember to correct to value in input of the function 'librosa.frames_to_time'.
-        # For example, setting sr = 0.1*sr you need to correct the input as librosa.frames_to_time(beat_frames, sr = 10*sr)
-
-        # Estimate beat times (2 possible ways). See https://librosa.org/doc/main/generated/librosa.beat.beat_track.html
-        # Way 1:
-        #tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
-        #beat_times = librosa.frames_to_time(beat_frames, sr=sr)
-
-        # Way 2:
         onset_env = librosa.onset.onset_strength(y=y, sr=sr, aggregate=np.median)
         tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
-        beat_times = librosa.frames_to_time(beat_frames, sr=(10/6)*sr) #100/55 is the adjustment for sr setted before.
+        beat_times = librosa.frames_to_time(beat_frames, sr=(10/6)*sr)
 
-        # Calculate pulse duration in seconds
         pulse_duration = 60 / bpm
-
         beat_info = []
         first_beat_time = beat_times[0]
         for i, beat_time in enumerate(beat_times):
-            # Determine the beat number (pulse number) relative to the first beat
             beat_number = int((beat_time - first_beat_time) / pulse_duration)
-
-            # Calculate position within the pulse
             position_in_pulse = ((beat_time - first_beat_time) % pulse_duration) / pulse_duration
             beat_info.append((beat_time, beat_number, position_in_pulse))
 
-        # Create a Pandas DataFrame
         df = pd.DataFrame(beat_info, columns=['Time (s)', 'Beat Number', 'Position in Pulse'])
         df['Relative Time (s)'] = df['Time (s)'] - df['Time (s)'].iloc[0]
         return df
-        
 
-    except FileNotFoundError:
-        print(f"Error: Input file '{audio_file}' not found.")
-        return None
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
 
 st.title("Beat Analyzer")
 
-# Use the audio recorder component
 audio_bytes = audio_recorder()
+
 if audio_bytes:
-    st.audio(audio_bytes, format="audio/wav")
-    if audio_bytes:
-    # Save the audio data to a temporary file
-        #temp_audio_file = "temp_audio.wav"
-        #with open(temp_audio_file, "wb") as f:
-        #    f.write(audio_bytes)
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio_file:
-            temp_audio_file.write(audio_bytes)
-            temp_audio_file_path = temp_audio_file.name
-
-        bpm = st.number_input("Enter BPM", min_value=1, value=128)
-
-        if st.button("Analyze"):
-            beat_data = analyze_beats(temp_audio_file, bpm)
-            if beat_data is not None:
-                st.write(beat_data)
-                st.dataframe(beat_data)  # Display DataFrame in Streamlit
-        # Remove temporary file after processing
-        #import os
-        os.remove(temp_audio_file_path)
+    bpm = st.number_input("Enter BPM", min_value=1, value=128)
+    if st.button("Analyze"):
+        beat_data = analyze_beats(audio_bytes, bpm)
+        if beat_data is not None:
+            st.dataframe(beat_data)
 else:
     st.warning("Please record an audio file.")
-
