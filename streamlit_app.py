@@ -64,14 +64,28 @@ def analyze_beats(audio_file, bpm):
         print(f"An error occurred: {e}")
         return None
 
-st.write('carregando audio...')
-audio_bytes = audio_recorder()
-#if audio_bytes:
-#    st.audio(audio_bytes, format="audio/wav")
+st.title("Beat Analyzer")
 
-bpm = 60
-beat_data = analyze_beats(audio_bytes, bpm)
-st.write(beat_data)
+# Use the audio recorder component
+audio_bytes = audio_recorder()
+
+if audio_bytes:
+    # Save the audio data to a temporary file
+    temp_audio_file = "temp_audio.wav"
+    with open(temp_audio_file, "wb") as f:
+        f.write(audio_bytes)
+
+    bpm = st.number_input("Enter BPM", min_value=1, value=128)
+
+    if st.button("Analyze"):
+        beat_data = analyze_beats(temp_audio_file, bpm)
+        if beat_data is not None:
+            st.dataframe(beat_data)  # Display DataFrame in Streamlit
+        # Remove temporary file after processing
+        #import os
+        #os.remove(temp_audio_file)
+else:
+    st.warning("Please record an audio file.")
 
 if beat_data is not None:
     st.success("Beat Information:")
