@@ -54,7 +54,7 @@ def analyze_beats(audio_file, bpm):
     # Create a Pandas DataFrame
     df = pd.DataFrame(beat_info, columns=['Time (s)', 'Beat Number', 'Position in Pulse'])
     df['Relative Time (s)'] = df['Time (s)'] - df['Time (s)'].iloc[0]
-return df
+    return df
         
 
     except FileNotFoundError:
