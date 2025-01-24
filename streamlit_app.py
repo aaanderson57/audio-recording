@@ -81,6 +81,7 @@ if audio_bytes:
         if st.button("Analyze"):
             beat_data = analyze_beats(temp_audio_file, bpm)
             if beat_data is not None:
+                st.write(beat_data)
                 st.dataframe(beat_data)  # Display DataFrame in Streamlit
         # Remove temporary file after processing
         #import os
